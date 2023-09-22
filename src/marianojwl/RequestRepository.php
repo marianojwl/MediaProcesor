@@ -27,7 +27,7 @@ namespace marianojwl {
 
         public function getNextN(int $n) {
             $objs = [];
-            $query = "SELECT * FROM ".$this->table." WHERE status IS NULL ORDER BY id DESC LIMIT ".$n;
+            $query = "SELECT * FROM ".$this->table." WHERE status IS NULL ORDER BY id ASC LIMIT ".$n;
             $result = $this->conn->query($query);
             while($row = $result->fetch_assoc()) {
                 $rsr = new ResourceRepository();

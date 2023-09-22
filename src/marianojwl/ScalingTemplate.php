@@ -38,7 +38,7 @@ namespace marianojwl {
             imagedestroy($originalImage);
             imagedestroy($resizedImage);
 
-            $resource = new Image(null,1,$outputPath,"image/jpeg",false);
+            $resource = new Image(null,1,$outputPath,"image/jpeg",false,$this->id);
             
             $resource = $this->storeResource($resource);
 

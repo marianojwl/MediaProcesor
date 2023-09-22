@@ -6,15 +6,29 @@ namespace marianojwl {
         protected $path;
         protected $mime_type;
         protected $original;
+        protected $template_id;
 
-        public function __construct($id, int $foreign_id, string $path, string $mime_type, bool $original) {
+        public function __construct($id, int $foreign_id, string $path, string $mime_type, bool $original, $template_id) {
             $this->id = $id;
             $this->foreign_id = $foreign_id;
             $this->path =  $path;
             $this->mime_type = $mime_type;
             $this->original = $original;
+            $this->template_id = $template_id;
         }
         
+
+        public function getTemplateId()
+        {
+                return $this->template_id;
+        }
+
+        public function setTemplateId($template_id): self
+        {
+                $this->template_id = $template_id;
+
+                return $this;
+        }
         /**
          * Get the value of id
          */
