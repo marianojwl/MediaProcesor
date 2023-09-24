@@ -1,5 +1,5 @@
 <?php
-namespace marianojwl {
+namespace marianojwl\MediaProcessor {
     class TemplateRepository extends Repository {
         protected $table;
         public function __construct() {
@@ -14,6 +14,12 @@ namespace marianojwl {
                 switch($row["type"]) {
                     case "IMGSCA":
                         $obj = new ScalingTemplate($row["id"],$row["description"],$row["sufix"],$row["type"],$row["settings"]);
+                        break;
+                    case "SOVER":
+                        $obj = new SimpleOverlayTemplate($row["id"],$row["description"],$row["sufix"],$row["type"],$row["settings"]);
+                        break;
+                    case "ROVER":
+                        $obj = new ResizedOverlayTemplate($row["id"],$row["description"],$row["sufix"],$row["type"],$row["settings"]);
                         break;
                     default:
                         return $obj;

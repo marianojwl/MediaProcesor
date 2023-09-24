@@ -1,5 +1,5 @@
 <?php
-namespace marianojwl {
+namespace marianojwl\MediaProcessor {
     class RequestQueue {
         protected $requests;
 

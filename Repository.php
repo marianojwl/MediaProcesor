@@ -1,5 +1,5 @@
 <?php
-namespace marianojwl {
+namespace marianojwl\MediaProcessor {
     class Repository {
         protected $conn;
         public function __construct() {

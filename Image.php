@@ -1,5 +1,5 @@
 <?php
-namespace marianojwl {
+namespace marianojwl\MediaProcessor {
     class Image extends Resource {
         /*
         public function __construct(int $id, int $foreign_id, string $path) {

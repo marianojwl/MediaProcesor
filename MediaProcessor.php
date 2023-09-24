@@ -1,9 +1,21 @@
 <?php
-namespace marianojwl {
-    class App {
+namespace marianojwl\MediaProcessor {
+    class MediaProcessor {
         protected $requestQueue;
         public function __construct() {
             $this->requestQueue = new RequestQueue();
+        }
+
+
+        /**
+         *  *********************************************
+         *  *   addRequest                              *
+         *  *   ==================                      *
+         *  *                                           *
+         *  *********************************************
+         */
+        public function addRequest(Request $request) {
+            $this->requestQueue->add($request);
         }
 
         /**
