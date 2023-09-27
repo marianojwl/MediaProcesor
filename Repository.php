@@ -1,9 +1,13 @@
 <?php
 namespace marianojwl\MediaProcessor {
     class Repository {
+        protected $mp;
         protected $conn;
-        public function __construct() {
-            $this->conn = new \mysqli("localhost","root","","mediaprocessor");
+        protected $table;
+        public function __construct(MediaProcessor $mp, $tableName) {
+            $this->mp = $mp;
+            $this->conn = $mp->getConn();
+            $this->table = $tableName;
         }
         public function closeConnection() {
             $this->conn->close();

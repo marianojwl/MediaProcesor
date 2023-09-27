@@ -2,11 +2,16 @@
 namespace marianojwl\MediaProcessor {
     class RequestQueue {
         protected $requests;
+        protected $mp;
 
-        public function __construct() {
+        public function __construct(MediaProcessor $mp) {
             $this->requests = [];
+            $this->mp = $mp;
         }
+        public function preview(int $i = 0) {
+            $req = $this->requests[$i]->preview();
 
+        }
         public function add(Request $r) {
             $this->requests[] = $r;
         }
@@ -15,7 +20,7 @@ namespace marianojwl\MediaProcessor {
         }
 
         public function fillUp(int $with=10) {
-            $rr = new RequestRepository();
+            $rr = $this->mp->getRequestRepository();
             $requests = $rr->getNextN($with);
             foreach($requests as $request)
                 $this->add($request);
@@ -23,7 +28,8 @@ namespace marianojwl\MediaProcessor {
 
         public function processAll() {
             foreach($this->requests as $request)
-                $request->process();
+                $this->mp->getRequestRepository()->save( $request->process() );
+                //$request->process();
         }
     }
 }

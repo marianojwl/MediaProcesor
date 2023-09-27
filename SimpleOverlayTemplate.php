@@ -7,8 +7,8 @@ namespace marianojwl\MediaProcessor {
         
 
         
-        public function __construct(int $id, string $description, string $sufix, $type, $settings) {
-            parent::__construct($id, $description, $sufix, $type, $settings);
+        public function __construct($mp, int $id, string $description, string $sufix, $type, $settings) {
+            parent::__construct($mp, $id, $description, $sufix, $type, $settings);
             $setts = json_decode( $settings , true);
             $this->width = $setts["width"];
             $this->height = $setts["height"];
@@ -16,10 +16,11 @@ namespace marianojwl\MediaProcessor {
             $this->overlay_resource_id = $setts["overlay_resource_id"];
         }
 
-        public function process(Resource $r, $settings = "{}") {
-            $rsr = new ResourceRepository();
-            $overlay_resource = $rsr->getById($this->overlay_resource_id);
-            $rsr->closeConnection();
+        public function prepare(Request $request, bool $preview = false) {
+            $settings = $this->settings;
+            $r = $request->getResource();
+            $trsr = $this->mp->getTemplateResourcesRepository();
+            $overlay_resource = $trsr->getById($this->overlay_resource_id);
                
             // Load the original image
             $originalImage = $this->imageCreateFromResource($r);
@@ -38,12 +39,14 @@ namespace marianojwl\MediaProcessor {
             // Create a new GD image resource for the final image
             $finalImage = imagecreatetruecolor( $this->width, $this->height );
 
-            imagecopyresized($finalImage, $originalImage, 0, 0, 0, 0, $this->width, $this->height, $originalWidth, $originalHeight);
+            imagecopyresampled($finalImage, $originalImage, 0, 0, 0, 0, $this->width, $this->height, $originalWidth, $originalHeight);
             
-            imagecopyresized($finalImage, $overlayImage, 0, 0, 0, 0, $this->width, $this->height, $overlayWidth, $overlayHeight);
+            imagecopyresampled($finalImage, $overlayImage, 0, 0, 0, 0, $this->width, $this->height, $overlayWidth, $overlayHeight);
 
-            // Define the path where you want to save the resized image
-            $outputPath = $this->getOutputPath($r, explode("/",$this->getMimeType())[1]);
+            if($preview)
+                $outputPath = null;
+            else
+                $outputPath = $this->getOutputPath($r, explode("/", $this->getMimeType())[1]);
 
             $this->imageSave($finalImage, $outputPath, $this->getMimeType());
         
@@ -52,11 +55,13 @@ namespace marianojwl\MediaProcessor {
             imagedestroy($overlayImage);
             imagedestroy($finalImage);
         
-            $resource = new Image(null, 1, $outputPath, $this->getMimeType(), false, $this->id);
+            //$resource = new Image(null, 1, $outputPath, $this->getMimeType(), false, $this->id);
+            $request->setStatus("processed");
+            $request->setProcessedPath($outputPath);
+            $this->mp->getRequestRepository()->save($request);
+            //$resource = $this->storeResource($resource);
         
-            $resource = $this->storeResource($resource);
-        
-            return $resource;
+            //return $resource;
         }
 
         

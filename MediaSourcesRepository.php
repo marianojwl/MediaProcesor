@@ -1,19 +1,13 @@
 <?php
 namespace marianojwl\MediaProcessor {
-    class ResourceRepository extends Repository {
-        /*
-        protected $table;
-        public function __construct($tableName) {
-            parent::__construct();
-            $this->table = $tableName;
-        }
-        */
+    class MediaSourcesRepository extends Repository {
         public function getById(int $id) {
             $obj = null;
             $query = "SELECT * FROM ".$this->table." WHERE id='".$id."'";
             $result = $this->conn->query($query);
             if($row = $result->fetch_assoc())
-                $obj = new Resource($row["id"],$row["foreign_id"],$row["path"],$row["mime_type"],$row["original"]=="1", $row["template_id"] );
+                $obj = new Resource($row["id"], null ,$row["path"], $row["mime_type"] , null , null );
+                //$obj = new Resource($row["id"],$row["foreign_id"],$row["path"],$row["mime_type"],$row["original"]=="1", $row["template_id"] );
             return $obj;
         }
 

@@ -6,18 +6,101 @@ namespace marianojwl\MediaProcessor {
         
 
         
-        public function __construct(int $id, string $description, string $sufix, $type, $settings) {
-            parent::__construct($id, $description, $sufix, $type, $settings);
+        public function __construct($mp, int $id, string $description, string $sufix, $type, $settings) {
+            parent::__construct($mp, $id, $description, $sufix, $type, $settings);
             $setts = json_decode( $settings , true);
             $this->width = $setts["width"];
             $this->height = $setts["height"];
             $this->setMimeType($setts["mime_type"]);
         }
-
-        public function process(Resource $r, $settings = "{}")  {
-            
+        public function prepare(Request $request, bool $preview = false) {
+            $settings = $this->settings;
+            $r = $request->getResource();
             // Load the original image
             $originalImage = $this->imageCreateFromResource($r);
+        
+            $originalWidth = imagesx($originalImage);
+            $originalHeight = imagesy($originalImage);
+        
+            // Define the new width and height while maintaining the aspect ratio
+            $newWidth = $this->width;
+            $newHeight = $this->height;
+        
+            $aspectRatio = $originalWidth / $originalHeight;
+            if ($newWidth / $newHeight > $aspectRatio) {
+                $newWidth = $newHeight * $aspectRatio;
+            } else {
+                $newHeight = $newWidth / $aspectRatio;
+            }
+        
+            // Create a new GD image resource for the resized image
+            $resizedImage = imagecreatetruecolor($newWidth, $newHeight);
+        
+            // Use a better interpolation method for resizing
+            imagecopyresampled($resizedImage, $originalImage, 0, 0, 0, 0, $newWidth, $newHeight, $originalWidth, $originalHeight);
+        
+            if($preview)
+                $outputPath = null;
+            else
+                $outputPath = $this->getOutputPath($r, explode("/", $this->getMimeType())[1]);
+        
+            $this->imageSave($resizedImage, $outputPath, $this->getMimeType());
+            
+            imagedestroy($originalImage);
+            imagedestroy($resizedImage);
+
+            $request->setStatus("processed");
+            $request->setProcessedPath($outputPath);
+            return $request;
+        }
+
+        public function processOld2(Request $request, $settings = "{}") {
+            $r = $request->getResource();
+            // Load the original image
+            $originalImage = $this->imageCreateFromResource($r);
+        
+            $originalWidth = imagesx($originalImage);
+            $originalHeight = imagesy($originalImage);
+        
+            // Define the new width and height while maintaining the aspect ratio
+            $newWidth = $this->width;
+            $newHeight = $this->height;
+        
+            $aspectRatio = $originalWidth / $originalHeight;
+            if ($newWidth / $newHeight > $aspectRatio) {
+                $newWidth = $newHeight * $aspectRatio;
+            } else {
+                $newHeight = $newWidth / $aspectRatio;
+            }
+        
+            // Create a new GD image resource for the resized image
+            $resizedImage = imagecreatetruecolor($newWidth, $newHeight);
+        
+            // Use a better interpolation method for resizing
+            imagecopyresampled($resizedImage, $originalImage, 0, 0, 0, 0, $newWidth, $newHeight, $originalWidth, $originalHeight);
+        
+            // Define the path where you want to save the resized image
+            $outputPath = $this->getOutputPath($r, explode("/", $this->getMimeType())[1]);
+        
+            $this->imageSave($resizedImage, $outputPath, $this->getMimeType());
+        
+            imagedestroy($originalImage);
+            imagedestroy($resizedImage);
+            $request->setStatus("processed");
+            $request->setProcessedPath($outputPath);
+            return $request;
+            //$this->mp->getRequestRepository()->save($request);
+        }
+
+        
+        public function processOld(Request $request, $settings = "{}")  {
+            $r = $request->getResource();
+            // Load the original image
+            $originalImage = $this->imageCreateFromResource($r);
+
+            $originalWidth = imagesx($originalImage);
+            $originalHeight = imagesy($originalImage);
+
 
             // Define the new width and height
             $newWidth = $this->width;
@@ -27,24 +110,21 @@ namespace marianojwl\MediaProcessor {
             $resizedImage = imagecreatetruecolor($newWidth, $newHeight);
 
             // Resize the image
-            imagecopyresized($resizedImage, $originalImage, 0, 0, 0, 0, $newWidth, $newHeight, imagesx($originalImage), imagesy($originalImage));
+            imagecopyresized($resizedImage, $originalImage, 0, 0, 0, 0, $newWidth, $newHeight, $originalWidth, $originalHeight);
 
             // Define the path where you want to save the resized image
             $outputPath = $this->getOutputPath($r, explode("/",$this->getMimeType())[1]);
-
+            
             $this->imageSave($resizedImage, $outputPath, $this->getMimeType());
 
-            
 
-            // Clean up resources
             imagedestroy($originalImage);
             imagedestroy($resizedImage);
 
-            $resource = new Image(null,1, $outputPath, $this->getMimeType(), false, $this->id);
-            
-            $resource = $this->storeResource($resource);
+            $request->setStatus("processed");
+            $request->setProcessedPath($outputPath);
+            $this->mp->getRequestRepository()->save($request);
 
-            return $resource;
         }
 
 

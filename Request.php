@@ -6,24 +6,36 @@ namespace marianojwl\MediaProcessor {
         protected $resource;
         protected $template;
         protected $status;
+        protected $processed_path;
+        protected $requesRepository;
 
-        public function __construct($id, $foreign_id, $resource, $template, $status) {
+        public function __construct($id, $resource, $template, $status, $processed_path, $requesRepository) {
             $this->id = $id;
-            $this->foreign_id = $foreign_id;
+            //$this->foreign_id = $foreign_id;
             $this->resource = $resource;
             $this->template = $template;
             $this->status = $status;
+            $this->processed_path = $processed_path;
+            $this->requesRepository = $requesRepository;
         }
         public function process() {
-            $resource = $this->template->process($this->resource);
-            if($resource !== null)
-                $this->setProcessed();
+            $resource = $this->template->process($this);
+            //if($resource !== null)
+            //   $this->setProcessed();
             return $resource;
         }
-        public function setProcessed() {
-            $rr = new RequestRepository();
-            return $rr->setStatus('processed',$this);;
+        public function preview() {
+                $resource = $this->template->prepare($this, true) ;
+
+                //if($resource !== null)
+                //   $this->setProcessed();
+                return $resource;
         }
+        /*
+        public function setProcessed() {
+            return $this->requesRepository->setStatus('processed',$this);;
+        }
+        */
 
             
         /**
@@ -115,7 +127,25 @@ namespace marianojwl\MediaProcessor {
 
                 return $this;
         }
+        /**
+         * Get the value of processed_path
+         */
+        public function getProcessedPath()
+        {
+                return $this->processed_path;
+        }
+
+        /**
+         * Set the value of processed_path
+         */
+        public function setProcessedPath($processed_path): self
+        {
+                $this->processed_path = $processed_path;
+
+                return $this;
+        }
     }
+
 
 
 }

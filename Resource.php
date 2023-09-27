@@ -8,7 +8,7 @@ namespace marianojwl\MediaProcessor {
         protected $original;
         protected $template_id;
 
-        public function __construct($id, int $foreign_id, string $path, string $mime_type, bool $original, $template_id) {
+        public function __construct($id,  $foreign_id, string $path,  $mime_type, $original, $template_id) {
             $this->id = $id;
             $this->foreign_id = $foreign_id;
             $this->path =  $path;

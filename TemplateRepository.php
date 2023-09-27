@@ -1,11 +1,13 @@
 <?php
 namespace marianojwl\MediaProcessor {
     class TemplateRepository extends Repository {
+        /*
         protected $table;
         public function __construct() {
             parent::__construct();
-            $this->table = "templates";
+            $this->table = $tableName;
         }
+        */
         public function getById(int $id) {
             $obj = null;
             $query = "SELECT * FROM ".$this->table." WHERE id='".$id."'";
@@ -13,13 +15,13 @@ namespace marianojwl\MediaProcessor {
             if($row = $result->fetch_assoc()) {
                 switch($row["type"]) {
                     case "IMGSCA":
-                        $obj = new ScalingTemplate($row["id"],$row["description"],$row["sufix"],$row["type"],$row["settings"]);
+                        $obj = new ScalingTemplate($this->mp, $row["id"],$row["description"],$row["sufix"],$row["type"],$row["settings"]);
                         break;
                     case "SOVER":
-                        $obj = new SimpleOverlayTemplate($row["id"],$row["description"],$row["sufix"],$row["type"],$row["settings"]);
+                        $obj = new SimpleOverlayTemplate($this->mp, $row["id"],$row["description"],$row["sufix"],$row["type"],$row["settings"]);
                         break;
                     case "ROVER":
-                        $obj = new ResizedOverlayTemplate($row["id"],$row["description"],$row["sufix"],$row["type"],$row["settings"]);
+                        $obj = new ResizedOverlayTemplate($this->mp, $row["id"],$row["description"],$row["sufix"],$row["type"],$row["settings"]);
                         break;
                     default:
                         return $obj;

@@ -8,19 +8,23 @@ namespace marianojwl\MediaProcessor {
         protected $settings;
         protected $mime_type;
         protected $quality;
+        protected $mp;
 
-        public function __construct(int $id, string $description, string $sufix, $type, $settings) {
+        public function __construct(MediaProcessor $mp, int $id, string $description, string $sufix, $type, $settings) {
+            $this->mp = $mp;
             $this->id = $id;
             $this->description = $description;
             $this->sufix = $sufix;
             $this->type = $type;
             $this->settings = $settings;
             $setts = json_decode( $settings , true);
-            $this->quality = $setts["quality"]??85;
+            $this->quality = $setts["quality"]??100;
         }
 
         protected function imageCreateFromResource(Resource $r) {
-                $path_to_file = $r->getPath();
+                $path_to_file = str_replace( dirname($_SERVER["SCRIPT_NAME"]). '/', "", $r->getPath() );
+                //$path_to_file =  $r->getPath();
+                //echo $path_to_file;
                 $originalImage = null;
                 switch($r->getMimeType()) {
                 case "image/jpeg":
@@ -34,36 +38,57 @@ namespace marianojwl\MediaProcessor {
         }
 
         protected function imageSave($gdImage, $outputPath, $mime_type) {
+                if($outputPath === null)
+                        header('Content-type:'.$mime_type);
+                else
+                        $outputPath = str_replace( dirname($_SERVER["SCRIPT_NAME"]). '/' , "", $outputPath);
+                //echo $outputPath;
                 switch($mime_type) {
                         case "image/jpeg":
-                                imagejpeg($gdImage, $outputPath, $this->quality);
+                                if($outputPath === null)
+                                        imagejpeg($gdImage); //, $outputPath); //, $this->quality);
+                                else
+                                        imagejpeg($gdImage, $outputPath);
                                 break;
                         case "image/png":
-                                imagepng($gdImage, $outputPath, ceil( $this->quality * 9 / 100 ) );
+                                if($outputPath === null)
+                                        imagepng($gdImage); //, $outputPath); //, ceil( $this->quality * 9 / 100 ) );
+                                else
+                                        imagepng($gdImage, $outputPath);
                                 break;
                         case "image/gif":
-                                imagegif($gdImage, $outputPath);
+                                if($outputPath === null)
+                                        imagegif($gdImage); //, $outputPath); //, ceil( $this->quality * 9 / 100 ) );
+                                else
+                                        imagegif($gdImage, $outputPath);
                                 break;
                 }
         }
 
-        public function process(Resource $r)  {
-            return $r;
-        }
+
+        public function process(Request $request)  {
+                return $this->prepare($request);
+            }
+        public function prepare(Request $r)  {
+        
+                return $r; //->getResource();
+            }
+        
         public function storeResource($resource) {
-                $rsr = new ResourceRepository();
+                $rsr = $this->mp->getRequestRepository();
                 $resource = $rsr->store($resource);
                 $rsr->closeConnection();
                 return $resource;
         }
-
+        
         public function getOutputPath(Resource $r, string $extension) {
                 $path_to_file = $r->getPath();
                 $pathInfo = pathinfo($path_to_file);
-                $directory = dirname($path_to_file);
+                //$directory = dirname($path_to_file);
+                $directory = $this->mp->getProcessedDir();
                 $filename = $pathInfo['filename'];
                 //$extension = $pathInfo['extension'];
-                $outputPath = $directory . '/' . $filename . '_' . $this->sufix . '.' . $extension;
+                $outputPath = $directory . $filename . '_' . $this->sufix . '.' . $extension;
                 return $outputPath;
             }
         /**
