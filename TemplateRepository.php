@@ -23,6 +23,9 @@ namespace marianojwl\MediaProcessor {
                     case "ROVER":
                         $obj = new ResizedOverlayTemplate($this->mp, $row["id"],$row["description"],$row["sufix"],$row["type"],$row["settings"]);
                         break;
+                    case "SIDEO":
+                        $obj = new OverlaySideTemplate($this->mp, $row["id"],$row["description"],$row["sufix"],$row["type"],$row["settings"]);
+                        break;
                     default:
                         return $obj;
                 }
