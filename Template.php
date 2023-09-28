@@ -36,13 +36,41 @@ namespace marianojwl\MediaProcessor {
                 }
                 return $originalImage;
         }
+        public function createThumb($gdImage, $outputPath, $mime_type) {
+                $originalImage = $gdImage;
+        
+                $originalWidth = imagesx($originalImage);
+                $originalHeight = imagesy($originalImage);
+                $aspectRatio = $originalWidth / $originalHeight;
 
-        protected function imageSave($gdImage, $outputPath, $mime_type) {
+                $thumbHeight = $this->mp->getThumbsHeight();
+                if($thumbHeight) {
+                        $newWidth = $thumbHeight * $aspectRatio;
+                        $newHeight = $thumbHeight;
+                } else {
+                        $newWidth = $this->mp->getThumbsWidth();
+                        $newHeight = $newWidth / $aspectRatio;
+                }
+            
+                // Create a new GD image resource for the resized image
+                $resizedImage = imagecreatetruecolor($newWidth, $newHeight);
+            
+                // Use a better interpolation method for resizing
+                imagecopyresampled($resizedImage, $originalImage, 0, 0, 0, 0, $newWidth, $newHeight, $originalWidth, $originalHeight);
+                $extension = explode("/", $mime_type)[1];
+                $outputPath = str_replace( ".".$extension , $this->mp->getThumbsSufix() . ".".$extension   , $outputPath);
+            
+                $this->imageSave($resizedImage, $outputPath, $mime_type, true);
+                
+                imagedestroy($originalImage);
+                imagedestroy($resizedImage);
+        }
+        protected function imageSave($gdImage, $outputPath, $mime_type, $isThumb = false) {
                 if($outputPath === null)
                         header('Content-type:'.$mime_type);
                 else
                         $outputPath = str_replace( dirname($_SERVER["SCRIPT_NAME"]). '/' , "", $outputPath);
-                //echo $outputPath;
+
                 switch($mime_type) {
                         case "image/jpeg":
                                 if($outputPath === null)
@@ -63,6 +91,8 @@ namespace marianojwl\MediaProcessor {
                                         imagegif($gdImage, $outputPath);
                                 break;
                 }
+                if($this->mp->getThumbsOn() && $outputPath !== null && !$isThumb)
+                        $this->createThumb($gdImage, $outputPath, $mime_type);
         }
 
 

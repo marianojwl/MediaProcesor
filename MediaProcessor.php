@@ -17,12 +17,21 @@ namespace marianojwl\MediaProcessor {
         protected $mediaSourcesRepository;
         protected $templateResourcesRepository;
 
+        protected $thumbsOn;
+        protected $thumbsSufix;
+        protected $thumbsWidth;
+        protected $thumbsHeight;
+
+
 
         public function __construct(int $queueLimit = 10, string $uploadsDir = "./uploads/", string $processedDir  = "./processed") {
             $this->queueLimit = $queueLimit;
             $this->uploadsDir = $uploadsDir;
             $this->processedDir = $processedDir;
             $this->requestQueue = new RequestQueue($this);
+            $this->thumbsOn = false;
+            $this->thumbsSufix = "_thumb";
+            $this->thumbsWidth = 200;
         }
         
         public function preview($i = 0) {
@@ -299,7 +308,79 @@ namespace marianojwl\MediaProcessor {
 
                 return $this;
         }
+        /**
+         * Get the value of thumbsOn
+         */
+        public function getThumbsOn()
+        {
+                return $this->thumbsOn;
+        }
+
+        /**
+         * Set the value of thumbsOn
+         */
+        public function setThumbsOn($thumbsOn): self
+        {
+                $this->thumbsOn = $thumbsOn;
+
+                return $this;
+        }
+        /**
+         * Get the value of thumbsSufix
+         */
+        public function getThumbsSufix()
+        {
+                return $this->thumbsSufix;
+        }
+
+        /**
+         * Set the value of thumbsSufix
+         */
+        public function setThumbsSufix($thumbsSufix): self
+        {
+                $this->thumbsSufix = $thumbsSufix;
+
+                return $this;
+        }
+        /**
+         * Get the value of thumbsWidth
+         */
+        public function getThumbsWidth()
+        {
+                return $this->thumbsWidth;
+        }
+
+        /**
+         * Set the value of thumbsWidth
+         */
+        public function setThumbsWidth($thumbsWidth): self
+        {
+                $this->thumbsWidth = $thumbsWidth;
+
+                return $this;
+        }
+        /**
+         * Get the value of thumbsHeight
+         */
+        public function getThumbsHeight()
+        {
+                return $this->thumbsHeight;
+        }
+
+        /**
+         * Set the value of thumbsHeight
+         */
+        public function setThumbsHeight($thumbsHeight): self
+        {
+                $this->thumbsHeight = $thumbsHeight;
+
+                return $this;
+        }
     }
+
+
+
+
 
 
 
