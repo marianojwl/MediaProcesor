@@ -5,8 +5,6 @@ namespace marianojwl\MediaProcessor {
         protected $height;
         protected $overlay_resource_id;
         
-
-        
         public function __construct($mp, int $id, string $description, string $sufix, $type, $settings) {
             parent::__construct($mp, $id, $description, $sufix, $type, $settings);
             $setts = json_decode( $settings , true);
@@ -63,10 +61,5 @@ namespace marianojwl\MediaProcessor {
         
             //return $resource;
         }
-
-        
-        
-
-
     }
 }

@@ -68,11 +68,10 @@ namespace marianojwl\MediaProcessor {
 
         public function process(Request $request)  {
                 return $this->prepare($request);
-            }
+        }
         public function prepare(Request $r)  {
-        
                 return $r; //->getResource();
-            }
+        }
         
         public function storeResource($resource) {
                 $rsr = $this->mp->getRequestRepository();
