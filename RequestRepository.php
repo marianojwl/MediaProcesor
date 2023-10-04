@@ -30,7 +30,7 @@ namespace marianojwl\MediaProcessor {
         public function getNextN(int $n) {
            
             $objs = [];
-            $query = "SELECT * FROM ".$this->table." WHERE status IS NULL ORDER BY id ASC LIMIT ".$n;
+            $query = "SELECT * FROM ".$this->table." WHERE status='pending' ORDER BY id ASC LIMIT ".$n;
             $result = $this->conn->query($query);
             
             while($row = $result->fetch_assoc()) {
