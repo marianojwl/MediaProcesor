@@ -21,7 +21,7 @@ namespace marianojwl\MediaProcessor {
                 $template = $tr->getById($row["template_id"]);
                 $tr->closeConnection();
 
-                $obj = new Request($row["id"], $resource, $template, $row["status"], $row["processed_path"], $this);
+                $obj = new Request($row["id"], $resource, $template, $row["status"], $row["processed_path"], $row["processed_thumb_path"], $this);
             }
                 
             return $obj;
@@ -40,7 +40,10 @@ namespace marianojwl\MediaProcessor {
                 
                 $tr = $this->mp->getTemplateRepository();
                 $template = $tr->getById($row["template_id"]);
-                $objs[] = new Request($row["id"], $resource, $template, $row["status"], $row["processed_path"], $this);
+                
+                $newRequest = new Request($row["id"], $resource, $template, $row["status"], $row["processed_path"], $row["processed_thumb_path"], $this);
+                $template->setRequest($newRequest);
+                $objs[] = $newRequest;
                 //$tr->closeConnection();
             }
             
@@ -56,7 +59,7 @@ namespace marianojwl\MediaProcessor {
         }
         */
         public function save(Request $request) {
-            $sql = "UPDATE ".$this->table." SET status='".$request->getStatus()."', processed_path='".$request->getProcessedPath()."' WHERE id='".$request->getId()."'";
+            $sql = "UPDATE ".$this->table." SET status='".$request->getStatus()."', processed_path='".$request->getProcessedPath()."' , processed_thumb_path='".$request->getProcessedThumbPath()."' WHERE id='".$request->getId()."'";
             $result = $this->conn->query($sql);
         }
 

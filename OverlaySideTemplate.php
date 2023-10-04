@@ -48,10 +48,10 @@ namespace marianojwl\MediaProcessor {
             $newWidthS = ($this->newX2 - $this->newX1);
             $newHeightS = ($this->newY2 - $this->newY1);
 
-            $aspectRatio = $this->width / $originalWidth;
+            $aspectRatio = $originalWidth / $this->width;
 
             $newHeightS = $originalHeight;
-            $newWidthS = $originalWidth * $aspectRatio;
+            $newWidthS = ceil($originalWidth / $aspectRatio);
 
             switch($this->side) {
                 case "left":

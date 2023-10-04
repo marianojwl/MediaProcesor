@@ -7,15 +7,17 @@ namespace marianojwl\MediaProcessor {
         protected $template;
         protected $status;
         protected $processed_path;
+        protected $processed_thumb_path;
         protected $requesRepository;
 
-        public function __construct($id, $resource, $template, $status, $processed_path, $requesRepository) {
+        public function __construct($id, $resource, $template, $status, $processed_path, $processed_thumb_path, $requesRepository) {
             $this->id = $id;
             //$this->foreign_id = $foreign_id;
             $this->resource = $resource;
             $this->template = $template;
             $this->status = $status;
             $this->processed_path = $processed_path;
+            $this->processed_thumb_path = $processed_thumb_path;
             $this->requesRepository = $requesRepository;
         }
         public function process() {
@@ -144,7 +146,25 @@ namespace marianojwl\MediaProcessor {
 
                 return $this;
         }
+        /**
+         * Get the value of processed_thumb_path
+         */
+        public function getProcessedThumbPath()
+        {
+                return $this->processed_thumb_path;
+        }
+
+        /**
+         * Set the value of processed_thumb_path
+         */
+        public function setProcessedThumbPath($processed_thumb_path): self
+        {
+                $this->processed_thumb_path = $processed_thumb_path;
+
+                return $this;
+        }
     }
+
 
 
 

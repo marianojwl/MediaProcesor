@@ -9,6 +9,7 @@ namespace marianojwl\MediaProcessor {
         protected $mime_type;
         protected $quality;
         protected $mp;
+        protected $request;
 
         public function __construct(MediaProcessor $mp, int $id, string $description, string $sufix, $type, $settings) {
             $this->mp = $mp;
@@ -61,6 +62,7 @@ namespace marianojwl\MediaProcessor {
                 $outputPath = str_replace( ".".$extension , $this->mp->getThumbsSufix() . ".".$extension   , $outputPath);
             
                 $this->imageSave($resizedImage, $outputPath, $mime_type, true);
+                $this->request->setProcessedThumbPath($outputPath);
                 
                 imagedestroy($originalImage);
                 imagedestroy($resizedImage);
@@ -100,7 +102,7 @@ namespace marianojwl\MediaProcessor {
                 return $this->prepare($request);
         }
         public function prepare(Request $r)  {
-                return $r; //->getResource();
+                return $r; 
         }
         
         public function storeResource($resource) {
@@ -243,7 +245,25 @@ namespace marianojwl\MediaProcessor {
 
                 return $this;
         }
+        /**
+         * Get the value of request
+         */
+        public function getRequest()
+        {
+                return $this->request;
+        }
+
+        /**
+         * Set the value of request
+         */
+        public function setRequest($request): self
+        {
+                $this->request = $request;
+
+                return $this;
+        }
     }
+
 
 
 
