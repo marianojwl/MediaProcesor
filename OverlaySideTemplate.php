@@ -27,74 +27,83 @@ namespace marianojwl\MediaProcessor {
         }
         public function prepare(Request $request, bool $preview = false) {
             $settings = $this->settings;
+            // ORIGINAL IMAGE ################################################
+            //get resourse
             $r = $request->getResource();
-            $trsr = $this->mp->getTemplateResourcesRepository();
-            $overlay_resource = $trsr->getById($this->overlay_resource_id);
-        
+
             // Load the original image
             $originalImage = $this->imageCreateFromResource($r);
-            $msW = imagesx($originalImage); // media_source Width
-            $msH = imagesy($originalImage); // media_source Height
+            $oiW = imagesx($originalImage); // originalImage Width
+            $oiH = imagesy($originalImage); // originalImage Height
+
+            // aspect ratio quotient
+            $arq = $oiH / $this->height;
+
+            $oiX = 0;
+            $oiY = 0;
+            
+            if($this->side=="left") {
+                $oiX = 0;
+                $oiY = 0;
+            } else if($this->side=="right") {
+                $oiX = $oiW-$this->width;
+                $oiY = 0;
+            } else if($this->side=="center") {
+                $oiX = ($oiW-$this->width)/2;
+                $oiY = 0;
+            }
+
+            
+            // Create a new GD image resource for the final image
+            $finalImage = imagecreatetruecolor($this->width, $this->height);
+
+            // set values and copy first image to final image
+            $dst_image = $finalImage;
+            $src_image = $originalImage;
+            $dst_x = 0;
+            $dst_y = 0;
+            $src_x = $oiX;
+            $src_y = $oiY;
+            $dst_width = $this->width;
+            $dst_height = $this->height;
+            $src_width = ($this->width * $arq);
+            $src_height = $oiH;
+                        
+            imagecopyresampled($dst_image, $src_image, $dst_x, $dst_y, $src_x,$src_y,$dst_width,$dst_height,$src_width, $src_height);
+            // destroy original image
+            imagedestroy($originalImage);
+
+            // OVERLAY ###############################################################
+
+            // get template repository
+            $trsr = $this->mp->getTemplateResourcesRepository();
+
+            // get overlay resource
+            $overlay_resource = $trsr->getById($this->overlay_resource_id);
 
             // Load the overlay image with transparency support
             $overlayImage = $this->imageCreateFromResource($overlay_resource);
-        
-            // Get the dimensions of the original image
-            $originalWidth = imagesx($originalImage);
-            $originalHeight = imagesy($originalImage);
-            // Define the new width and height while maintaining the aspect ratio
-
-            
-            $newWidthS = ($this->newX2 - $this->newX1);
-            $newHeightS = ($this->newY2 - $this->newY1);
-
-            $aspectRatio = $originalWidth / $this->width;
-
-            $newHeightS = $originalHeight;
-            $newWidthS = ceil($originalWidth / $aspectRatio);
-
-            switch($this->side) {
-                case "left":
-                    $newXX1 = 0;
-                    break;
-                case "right":
-                    $newXX1 = $originalWidth-$newWidthS;
-                    break;
-                case "center":
-                default:
-                    $newXX1 = ($originalWidth-$newWidthS)/2;
-                    break;
-            }
-
-            // Get the dimensions of the overlay image
-            $overlayWidth = imagesx($overlayImage);
-            $overlayHeight = imagesy($overlayImage);
-        
-            // Create a new GD image resource for the final image
-            $finalImage = imagecreatetruecolor($this->width, $this->height);
-        // imagecopyresampled($finalImage, $originalImage, $dst_x, $dst_y, $src_x,$src_y,$dst_width,$dst_height,$src_width, $src_height
-            imagecopyresampled($finalImage, $originalImage, 0   , 0     , $newXX1 , 0 , $this->width, $this->height, $newWidthS, $newHeightS);
-
-            
-            imagedestroy($originalImage); // <- destroy ========
+            $olW = imagesx($overlayImage); // overlay Width
+            $olH = imagesy($overlayImage); // overlay Height
 
             // Overlay the transparent image on top of the resized original image
-            imagecopyresampled($finalImage, $overlayImage, 0, 0, 0, 0, $this->width, $this->height, $overlayWidth, $overlayHeight);
-        
+            imagecopyresampled($finalImage, $overlayImage, 0, 0, 0, 0, $this->width, $this->height, $olW, $olH);
+            // destroy overlay image
+            imagedestroy($overlayImage);
+
             if($preview)
                 $outputPath = null;
             else
                 $outputPath = $this->getOutputPath($r, explode("/", $this->getMimeType())[1]);
-        
+
             $this->imageSave($finalImage, $outputPath, $this->getMimeType());
-        
+
             // Clean up resources
             
-            imagedestroy($overlayImage);
+            //
             imagedestroy($finalImage);
-            
-            
-        
+
+
             // Update request status and processed path
             $request->setStatus("processed");
             $request->setProcessedPath($outputPath);
