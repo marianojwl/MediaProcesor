@@ -46,10 +46,11 @@ namespace marianojwl\MediaProcessor {
                 $oiX = 0;
                 $oiY = 0;
             } else if($this->side=="right") {
-                $oiX = $oiW-$this->width;
+                $oiX = abs($oiW-$this->width);
                 $oiY = 0;
             } else if($this->side=="center") {
-                $oiX = ($oiW-$this->width)/2;
+                // absolute value
+                $oiX = abs($oiW-$this->width)/2;
                 $oiY = 0;
             }
 
