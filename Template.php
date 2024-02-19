@@ -69,7 +69,7 @@ namespace marianojwl\MediaProcessor {
         }
         protected function imageSave($gdImage, $outputPath, $mime_type, $isThumb = false) {
                 if($outputPath === null)
-                      header('Content-type:'.$mime_type);
+                      $a=1; //header('Content-type:'.$mime_type);
                 else
                         $outputPath = str_replace( dirname($_SERVER["SCRIPT_NAME"]). '/' , "", $outputPath);
 
