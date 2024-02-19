@@ -23,9 +23,8 @@ namespace marianojwl\MediaProcessor {
         }
 
         protected function imageCreateFromResource(Resource $r) {
-                $path_to_file = str_replace( dirname($_SERVER["SCRIPT_NAME"]). '/', "", $r->getPath() );
-                //$path_to_file =  $r->getPath();
-                //echo $path_to_file;
+                //$path_to_file = str_replace( dirname($_SERVER["SCRIPT_NAME"]). '/', "", $r->getPath() );
+                $path_to_file =  $r->getPath();
                 $originalImage = null;
                 switch($r->getMimeType()) {
                 case "image/jpeg":
