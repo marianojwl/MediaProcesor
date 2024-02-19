@@ -42,6 +42,7 @@ namespace marianojwl\MediaProcessor {
                 $template = $tr->getById($row["template_id"]);
                 
                 $newRequest = new Request($row["id"], $resource, $template, $row["status"], $row["processed_path"], $row["processed_thumb_path"], $this);
+                $newRequest->setSettings($row["settings"]);
                 $template->setRequest($newRequest);
                 $objs[] = $newRequest;
                 //$tr->closeConnection();

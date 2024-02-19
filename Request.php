@@ -10,6 +10,24 @@ namespace marianojwl\MediaProcessor {
         protected $processed_thumb_path;
         protected $requesRepository;
 
+        protected $settings;
+        /**
+         * Get the value of settings
+         */
+        public function getSettings()
+        {
+                return $this->settings;
+        }
+        /**
+         * Set the value of settings
+         */
+        public function setSettings($settings): self
+        {
+                $this->settings = $settings;
+
+                return $this;
+        }
+        
         public function __construct($id, $resource, $template, $status, $processed_path, $processed_thumb_path, $requesRepository) {
             $this->id = $id;
             //$this->foreign_id = $foreign_id;
