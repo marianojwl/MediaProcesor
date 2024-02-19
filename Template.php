@@ -32,7 +32,7 @@ namespace marianojwl\MediaProcessor {
                         $originalImage = imagecreatefromjpeg("https://brodi.com.ar".$path_to_file);
                         break;
                 case "image/png":
-                        $originalImage = imagecreatefrompng($path_to_file);
+                        $originalImage = imagecreatefrompng("https://brodi.com.ar".$path_to_file);
                         break;
                 }
                 return $originalImage;
