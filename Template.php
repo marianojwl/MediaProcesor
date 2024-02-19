@@ -32,7 +32,7 @@ namespace marianojwl\MediaProcessor {
                         $originalImage = imagecreatefromjpeg("https://brodi.com.ar".$path_to_file);
                         break;
                 case "image/png":
-                        $originalImage = imagecreatefrompng("https://brodi.com.ar".$path_to_file);
+                        $originalImage = imagecreatefrompng($path_to_file);
                         break;
                 }
                 return $originalImage;
@@ -69,7 +69,7 @@ namespace marianojwl\MediaProcessor {
         }
         protected function imageSave($gdImage, $outputPath, $mime_type, $isThumb = false) {
                 if($outputPath === null)
-                      $a=1; //header('Content-type:'.$mime_type);
+                      header('Content-type:'.$mime_type);
                 else
                         $outputPath = str_replace( dirname($_SERVER["SCRIPT_NAME"]). '/' , "", $outputPath);
 
