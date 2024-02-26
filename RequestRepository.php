@@ -8,6 +8,40 @@ namespace marianojwl\MediaProcessor {
             $this->table = $tableName;
         }
         */
+        public function addQuick($media_source_id, $template_id, $status, $settings) {
+          $sql = "INSERT INTO ".$this->table." (media_source_id, template_id, status, settings) VALUES ('".$media_source_id."', '".$template_id."', '".$status."', '".$settings."')";
+          $result = $this->conn->query($sql);
+          $success = false;
+          $message = "";
+          $error = "";
+          $data = null;
+          if($result) {
+              $success = true;
+              $message = "Request added successfully";
+              $data = ["insert_id"=>$this->conn->insert_id];
+          } else {
+              $error = $this->conn->error;
+              $message = "Error adding request";
+          }
+          return json_encode(["success"=>$success, "message"=>$message, "error"=>$error, "data"=>$data]);
+        }
+        public function add($request) {
+          $sql = "INSERT INTO ".$this->table." (media_source_id, template_id, status, settings) VALUES ('".$request->getResource()->getId()."', '".$request->getTemplate()->getId()."', '".$request->getStatus()."', '".$request->getSettings()."')";
+          $result = $this->conn->query($sql);
+          $success = false;
+          $message = "";
+          $error = "";
+          $data = null;
+          if($result) {
+              $success = true;
+              $message = "Request added successfully";
+              $data = ["insert_id"=>$this->conn->insert_id];
+          } else {
+              $error = $this->conn->error;
+              $message = "Error adding request";
+          }
+          return json_encode(["success"=>$success, "message"=>$message, "error"=>$error, "data"=>$data]);
+        }
         public function getById(int $id) {
             $obj = null;
             $query = "SELECT * FROM ".$this->table." WHERE id='".$id."'";

@@ -53,7 +53,9 @@ namespace marianojwl\MediaProcessor {
               $x2 = $rec["x2"];
               $y2 = $rec["y2"];
               $bgColor = imagecolorallocate($finalImage, hexdec(substr($color, 0, 2)), hexdec(substr($color, 2, 2)), hexdec(substr($color, 4, 2)));
+              //$bgColor = imagecolorallocatealpha($finalImage, hexdec(substr($color, 0, 2)), hexdec(substr($color, 2, 2)), hexdec(substr($color, 4, 2)),60);
               imagefilledrectangle($finalImage, $x1, $y1, $x2, $y2, $bgColor);
+              
           }
 
           // Images
