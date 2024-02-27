@@ -56,7 +56,7 @@ namespace marianojwl\MediaProcessor {
          *  *********************************************
          */
         public function requestQueueFillUp() {
-            $this->requestQueue->fillUp( $this->queueLimit );
+            return $this->requestQueue->fillUp( $this->queueLimit );
         }
 
 
@@ -69,6 +69,9 @@ namespace marianojwl\MediaProcessor {
          */
         public function requestQueueProcessAll() {
             $this->requestQueue->processAll();
+        }
+        public function requestQueueProcessAllWithResult() {
+            return $this->requestQueue->processAllWithResult();
         }
 
 

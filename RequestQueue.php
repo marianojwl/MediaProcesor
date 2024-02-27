@@ -24,12 +24,27 @@ namespace marianojwl\MediaProcessor {
             $requests = $rr->getNextN($with);
             foreach($requests as $request)
                 $this->add($request);
+            return count($requests);
         }
 
         public function processAll() {
             foreach($this->requests as $request)
                 $this->mp->getRequestRepository()->save( $request->process() );
                 //$request->process();
+        }
+        public function processAllWithResult() {
+            $results = [];
+            $success = true;
+            $error = "";
+            try {
+              foreach($this->requests as $request)
+                  $results[] = $this->mp->getRequestRepository()->save( $request->process() );
+            } catch (\Exception $e) {
+              $success = false;
+              $error = $e->getMessage();
+            }
+          return ["success"=>$success, "error"=>$error, "data"=>["results"=>$results]];
+                
         }
     }
 }

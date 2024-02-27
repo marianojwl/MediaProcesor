@@ -96,6 +96,7 @@ namespace marianojwl\MediaProcessor {
         public function save(Request $request) {
             $sql = "UPDATE ".$this->table." SET status='".$request->getStatus()."', processed_path='".$request->getProcessedPath()."' , processed_thumb_path='".$request->getProcessedThumbPath()."' WHERE id='".$request->getId()."'";
             $result = $this->conn->query($sql);
+            return $result;
         }
 
     }
