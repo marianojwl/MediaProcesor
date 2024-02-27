@@ -66,11 +66,14 @@ namespace marianojwl\MediaProcessor {
                 imagedestroy($originalImage);
                 imagedestroy($resizedImage);
         }
-        protected function imageSave($gdImage, $outputPath, $mime_type, $isThumb = false) {
+        protected function imageSave($gdImage, $outputPath, $mime_type, $isThumb = false, $absPath = false) {
                 if($outputPath === null)
                       $a=1; //header('Content-type:'.$mime_type);
-                else
-                        $outputPath = str_replace( dirname($_SERVER["SCRIPT_NAME"]). '/' , "", $outputPath);
+                else {
+                  if( ! $absPath )
+                    $outputPath = str_replace( dirname($_SERVER["SCRIPT_NAME"]). '/' , "", $outputPath);
+                }
+                        
 
                 switch($mime_type) {
                         case "image/jpeg":
