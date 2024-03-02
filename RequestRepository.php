@@ -8,8 +8,10 @@ namespace marianojwl\MediaProcessor {
             $this->table = $tableName;
         }
         */
-        public function addQuick($media_source_id, $template_id, $status, $settings) {
+        public function addQuick($media_source_id, $template_id, $status, $settings, $settings_hash = null) {
           $sql = "INSERT INTO ".$this->table." (media_source_id, template_id, status, settings) VALUES ('".$media_source_id."', '".$template_id."', '".$status."', '".$settings."')";
+          if($settings_hash !== null)
+            $sql = "INSERT INTO ".$this->table." (media_source_id, template_id, status, settings, settings_hash) VALUES ('".$media_source_id."', '".$template_id."', '".$status."', '".$settings."', '".$settings_hash."')";
           $result = $this->conn->query($sql);
           $success = false;
           $message = "";
@@ -97,6 +99,19 @@ namespace marianojwl\MediaProcessor {
             $sql = "UPDATE ".$this->table." SET status='".$request->getStatus()."', processed_path='".$request->getProcessedPath()."' , processed_thumb_path='".$request->getProcessedThumbPath()."' WHERE id='".$request->getId()."'";
             $result = $this->conn->query($sql);
             return $result;
+        }
+        public function getByParams($params) {
+            $objs = [];
+            $query = "SELECT * FROM ".$this->table." WHERE ";
+            foreach($params as $key=>$value) {
+                $query .= $key."='".$value."' AND ";
+            }
+            $query = substr($query, 0, -4);
+            $result = $this->conn->query($query);
+            while($row = $result->fetch_assoc()) {
+                $objs[] = $row;
+            }
+            return $objs;
         }
 
     }
