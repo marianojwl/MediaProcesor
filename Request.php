@@ -11,6 +11,18 @@ namespace marianojwl\MediaProcessor {
         protected $requesRepository;
 
         protected $settings;
+        protected $settings_hash;
+        // getter and setter for settings_hash
+        public function getSettingsHash()
+        {
+                return $this->settings_hash;
+        }
+        public function setSettingsHash($settings_hash): self
+        {
+                $this->settings_hash = $settings_hash;
+
+                return $this;
+        }
         /**
          * Get the value of settings
          */

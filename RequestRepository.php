@@ -58,6 +58,8 @@ namespace marianojwl\MediaProcessor {
                 $tr->closeConnection();
 
                 $obj = new Request($row["id"], $resource, $template, $row["status"], $row["processed_path"], $row["processed_thumb_path"], $this);
+                if(isset($row["settings"])) $obj->setSettings($row["settings"]);
+                if(isset($row["settings_hash"])) $obj->setSettingsHash($row["settings_hash"]);
             }
                 
             return $obj;
@@ -78,7 +80,8 @@ namespace marianojwl\MediaProcessor {
                 $template = $tr->getById($row["template_id"]);
                 
                 $newRequest = new Request($row["id"], $resource, $template, $row["status"], $row["processed_path"], $row["processed_thumb_path"], $this);
-                $newRequest->setSettings($row["settings"]);
+                if(isset($row["settings"])) $newRequest->setSettings($row["settings"]);
+                if(isset($row["settings_hash"])) $newRequest->setSettingsHash($row["settings_hash"]);
                 $template->setRequest($newRequest);
                 $objs[] = $newRequest;
                 //$tr->closeConnection();

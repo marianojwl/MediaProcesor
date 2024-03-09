@@ -121,7 +121,12 @@ namespace marianojwl\MediaProcessor {
                 $directory = $this->mp->getProcessedDir();
                 $filename = $pathInfo['filename'];
                 //$extension = $pathInfo['extension'];
-                $outputPath = $directory . $filename . '_' . $this->sufix . '.' . $extension;
+                $number = 0;
+                $outputPath = $directory . $filename . '_' . $number . "_" . $this->sufix . '.' . $extension;
+                while(file_exists($outputPath)) {
+                        $number++;
+                        $outputPath = $directory . $filename . '_' . $number . "_" . $this->sufix . '.' . $extension;
+                }
                 return $outputPath;
             }
         /**
