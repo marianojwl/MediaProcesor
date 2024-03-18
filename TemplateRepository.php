@@ -23,6 +23,9 @@ namespace marianojwl\MediaProcessor {
                     case "ROVER":
                         $obj = new ResizedOverlayTemplate($this->mp, $row["id"],$row["description"],$row["sufix"],$row["type"],$row["settings"]);
                         break;
+                    case "PUTONTOP":
+                        $obj = new PutOnTopTemplate($this->mp, $row["id"],$row["description"],$row["sufix"],$row["type"],$row["settings"]);
+                        break;
                     case "RBLUR":
                         $obj = new ResizedBlurTemplate($this->mp, $row["id"],$row["description"],$row["sufix"],$row["type"],$row["settings"]);
                         break;
