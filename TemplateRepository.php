@@ -32,6 +32,9 @@ namespace marianojwl\MediaProcessor {
                     case "SIDEO":
                         $obj = new OverlaySideTemplate($this->mp, $row["id"],$row["description"],$row["sufix"],$row["type"],$row["settings"]);
                         break;
+                    case "SIDEO2":
+                        $obj = new OverlaySideTemplate2($this->mp, $row["id"],$row["description"],$row["sufix"],$row["type"],$row["settings"]);
+                        break;
                     case "TEXTS":
                         $obj = new TextTemplate($this->mp, $row["id"],$row["description"],$row["sufix"],$row["type"],$row["settings"]);
                         break;
