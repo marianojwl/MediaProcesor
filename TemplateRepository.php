@@ -38,6 +38,9 @@ namespace marianojwl\MediaProcessor {
                     case "TEXTS":
                         $obj = new TextTemplate($this->mp, $row["id"],$row["description"],$row["sufix"],$row["type"],$row["settings"]);
                         break;
+                    case "CUSTOM":
+                        $obj = new CustomTemplate($this->mp, $row["id"],$row["description"],$row["sufix"],$row["type"],$row["settings"]);
+                        break;
                     default:
                         return $obj;
                 }

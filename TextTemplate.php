@@ -8,6 +8,7 @@ namespace marianojwl\MediaProcessor {
         protected $newX2;
         protected $newY1;
         protected $newY2;
+        protected $font;
         
 
         
@@ -16,6 +17,7 @@ namespace marianojwl\MediaProcessor {
             $setts = json_decode( $settings , true);
             $this->width = $setts["width"];
             $this->height = $setts["height"];
+            $this->font = $setts["font"]??'PassionOne-Regular.ttf';
             $this->newX1 = 0;
             $this->newX2 = $this->width;
             $this->newY1 = 0;
@@ -37,6 +39,22 @@ namespace marianojwl\MediaProcessor {
           $trsr = $this->mp->getTemplateResourcesRepository();
 
           $finalImage = imagecreatetruecolor($this->width, $this->height);
+          $textDims = [];
+          // Text Coordinates
+          $texts = $requestSettings["txt"];
+          foreach ($texts as $text) {
+              $color = $text["color"];
+              $x = 0;
+              $y = $text["y"]??50;
+              $font = __DIR__."/fonts/".$this->font;
+              $fontSize = $text["s"]??20;
+              $angle = 0;
+              $padding = $text["linePadding"]??0;
+              $textColor = imagecolorallocate($finalImage, hexdec(substr($color, 0, 2)), hexdec(substr($color, 2, 2)), hexdec(substr($color, 4, 2)));
+              $coords = imagettftext($finalImage, $fontSize, $angle, $x, $y, $textColor, $font, $text["text"]);
+              //$coords[5] = $coords[7] = $coords[5] - $y;
+              $textDims[] = [$coords[2], $coords[5] - $y];
+          }
 
           // Background image
           $bgImg_resource = $trsr->getById($templateSettings["bgImgId"]);
@@ -83,8 +101,9 @@ namespace marianojwl\MediaProcessor {
                 imagecopyresampled($finalBluredImage, $bluredImage, 0, 0, $bW*$inner, $bH*$inner, $miniW, $miniH, $bW*(1-$inner), $bH*(1-$inner));
                 imagedestroy($bluredImage); // <- destroy =================
 
-                for ($j = 0; $j < 4; $j++)
+                for ($j = 0; $j < 4; $j++) {
                     imagefilter($finalBluredImage, IMG_FILTER_GAUSSIAN_BLUR);
+                }
                 
                 imagecopyresampled($finalImage, $finalBluredImage, $img["x"], $img["y"], 0, 0, $containerWidth, $containerHeight, $miniW, $miniH);
                 imagedestroy($finalBluredImage); // <- destroy ========
@@ -106,11 +125,20 @@ namespace marianojwl\MediaProcessor {
 
           // Texts
           $texts = $requestSettings["txt"];
+          $text_i = 0;
           foreach ($texts as $text) {
               $color = $text["color"];
               $x = $text["x"]??0;
               $y = $text["y"]??50;
-              $font = __DIR__."/fonts/PassionOne-Regular.ttf";
+              $align = $text["align"]??"left";
+              if($align == "center") {
+                $x = ($this->width - $textDims[$text_i][0]) / 2;
+              }
+              if($align == "right") {
+                $x = ($this->width - $textDims[$text_i][0]) - $x;
+              }
+
+              $font = __DIR__."/fonts/".$this->font;
               $fontSize = $text["s"]??20;
               $angle = 0;
               $padding = $text["linePadding"]??0;
@@ -125,6 +153,7 @@ namespace marianojwl\MediaProcessor {
               }
               $textColor = imagecolorallocate($finalImage, hexdec(substr($color, 0, 2)), hexdec(substr($color, 2, 2)), hexdec(substr($color, 4, 2)));
               $coords = imagettftext($finalImage, $fontSize, $angle, $x, $y, $textColor, $font, $text["text"]);
+              $text_i++;
           }
           
           
