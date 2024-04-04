@@ -87,7 +87,7 @@ namespace marianojwl\MediaProcessor {
               $containerWidth = $img["w"];
               $containerHeight = $img["h"];
               $containerRatio = $containerWidth / $containerHeight;
-              if($overlayRatio  != $containerRatio && ($img["keepRatio"]??false) === true) {
+              if($overlayRatio  != $containerRatio && ($img["keepRatio"]??false) === true && $templateSettings["posterBG"] == "blur") {
                 // blured image below
                 $bluredImage = $this->imageCreateFromResource($r);
                 $msW = imagesx($bluredImage);
@@ -118,6 +118,10 @@ namespace marianojwl\MediaProcessor {
                   $finalWidth = $containerHeight * $overlayRatio;
                   $finalY = $img["y"];
                   $finalX = $img["x"] + ($containerWidth - $finalWidth) / 2;
+              }
+              if(@$img["frameColor"]) {
+                $frameWidth = floor($this->width*0.01);
+                imagefilledrectangle($finalImage, $finalX-$frameWidth,  $finalY-$frameWidth,  $finalX+$finalWidth+$frameWidth, $finalY+$finalHeight+$frameWidth, imagecolorallocate($finalImage, hexdec(substr($img["frameColor"], 0, 2)), hexdec(substr($img["frameColor"], 2, 2)), hexdec(substr($img["frameColor"], 4, 2))));
               }
               imagecopyresampled($finalImage, $overlayImage, $finalX , $finalY, 0, 0, $finalWidth, $finalHeight, imagesx($overlayImage), imagesy($overlayImage));
               imagedestroy($overlayImage);
