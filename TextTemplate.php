@@ -119,6 +119,14 @@ namespace marianojwl\MediaProcessor {
                   $finalY = $img["y"];
                   $finalX = $img["x"] + ($containerWidth - $finalWidth) / 2;
               }
+              if(@$img["frameColor3"] && (@$img["bg"]??"blur") != "blur") {
+                $frameWidth = floor($this->width*0.01)*3;
+                imagefilledrectangle($finalImage, $finalX-$frameWidth,  $finalY-$frameWidth,  $finalX+$finalWidth+$frameWidth, $finalY+$finalHeight+$frameWidth, imagecolorallocate($finalImage, hexdec(substr($img["frameColor3"], 0, 2)), hexdec(substr($img["frameColor3"], 2, 2)), hexdec(substr($img["frameColor3"], 4, 2))));
+              }
+              if(@$img["frameColor2"] && (@$img["bg"]??"blur") != "blur") {
+                $frameWidth = floor($this->width*0.01)*2;
+                imagefilledrectangle($finalImage, $finalX-$frameWidth,  $finalY-$frameWidth,  $finalX+$finalWidth+$frameWidth, $finalY+$finalHeight+$frameWidth, imagecolorallocate($finalImage, hexdec(substr($img["frameColor2"], 0, 2)), hexdec(substr($img["frameColor2"], 2, 2)), hexdec(substr($img["frameColor2"], 4, 2))));
+              }
               if(@$img["frameColor"] && (@$img["bg"]??"blur") != "blur") {
                 $frameWidth = floor($this->width*0.01);
                 imagefilledrectangle($finalImage, $finalX-$frameWidth,  $finalY-$frameWidth,  $finalX+$finalWidth+$frameWidth, $finalY+$finalHeight+$frameWidth, imagecolorallocate($finalImage, hexdec(substr($img["frameColor"], 0, 2)), hexdec(substr($img["frameColor"], 2, 2)), hexdec(substr($img["frameColor"], 4, 2))));
