@@ -23,6 +23,17 @@ namespace marianojwl\MediaProcessor {
             }
             return $rows;
         }
+        public function getAllActiveAsArray() {
+            $sql = "SELECT * FROM " . $this->table . " WHERE active=1";
+            $result = $this->conn->query($sql);
+            $rows = array();
+            if ($result->num_rows > 0) {
+                while($row = $result->fetch_assoc()) {
+                    $rows[] = $row;
+                }
+            }
+            return $rows;
+        }
 
         public function update($id, $data) {
             $sql = "UPDATE " . $this->table . " SET ";
